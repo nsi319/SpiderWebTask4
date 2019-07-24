@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Register user</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="{{url_for('static',filename='register.css')}}">
+        <link href='https://fonts.googleapis.com/css?family=Acme' rel='stylesheet'>
+        <link href='https://fonts.googleapis.com/css?family=Actor' rel='stylesheet'>
+    </head>
+
+    <body>
+      <header>
+        <h1>Movie Manager</h1>
+      </header>
+      <div class = "user_login">
+        <form method="POST" action="" id = "register">
+          <pre>
+      Username:         <input type="text" required name="user" id="usr">
+      <br>
+      Password:         <input type="text" required name="pass" oninput="myfunc(this)">
+      <br>
+      Confirm Password: <input type="text" required name="passc" oninput="myfunc(this)">
+    </pre>
+
+ 
+  <button type="submit" form="register" value="Submit">Register</button>
+        <div id="output"></div>
+        {% if msg %}
+        <p>{{msg}}</p>
+        {% endif %}
+   
+  </form>
+  <div align="center">
+ <a href="{{url_for('login')}}"><button>Login</button></a>
+</div>
+</div>
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        function myfunc(inp){
+            inp.setAttribute("type","password");
+        }
+        $(document).ready(function() {
+            $('input[name="user"]').on('change', function(event) {
+              $.ajax({
+                 data : {
+                    username : $('#usr').val(),
+                        },
+                    type : 'POST',
+                    url : '/check'
+                   })
+               .done(function(data) {
+                 $('#output').text(data.output).show();
+             });
+             event.preventDefault();
+             });
+       });
+
+    </script>
+
+</html>

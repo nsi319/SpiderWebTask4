@@ -1,0 +1,73 @@
+body{
+    background-image: url("b1.jpg");
+    background-size: cover;
+    font-family: 'Bigshot One';
+}
+
+
+
+h1{
+    float: left;
+    font-size: 30px;
+    font-style: bold;
+}
+
+.nav{
+    overflow: auto;
+    background-color: lightgrey;
+}
+.nav a{
+    left: 100px;
+    position: relative;
+    top:25px;
+    padding:15px;
+    color: black;
+    font-style: bold;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.active{
+    background-color: darkgrey;
+}
+
+.activity{
+    overflow: auto;
+}
+
+.activity a{
+    float: left;
+    padding-right: 50px;
+    text-decoration: none;
+}
+
+.favourites ,.wa ,.wl ,.liked{
+ margin-left: 20px;
+ padding:10px;
+}
+
+.s_users{
+    float: right;
+    position: relative;
+    top:20px;
+    right:20px;
+}
+
+form div{
+    padding: 5px;
+}
+
+h4{
+    position: relative;
+    left:10px;
+}
+
+button{
+    border-radius: 9px;
+    position: relative;
+    left:10px;
+    width: 100px;
+    height: 20px;
+    border:none;
+
+}

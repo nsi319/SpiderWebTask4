@@ -1,0 +1,54 @@
+body{
+    background-image: url("b1.jpg");
+    background-size: cover;
+    font-family: 'Bigshot One';
+}
+
+
+.user_login{
+    border:2px solid black;
+    width: 500px;
+    padding: 10px;
+    background-color:lightgrey;
+    margin: auto;
+}
+button {
+    display: block;
+    text-align: center;
+}
+p{
+    display: block;
+}
+
+form div{
+    padding: 10px;
+}
+
+label{
+    display: inline-block;
+    text-align: left;
+    width: 100px;
+}
+
+input{
+    width: 200px;
+}
+#output{
+    float: right;
+    position: relative;
+    bottom: 220px;
+    right:  240px;
+    font-size: 17px;
+  }
+h1{
+    font-size: 40px;
+    font-style: bold;
+    text-align: center;
+    display: block;
+}
+h2 {
+    font-size: 30px;
+    font-style: bold;
+    text-align: center;
+    display: block;
+}

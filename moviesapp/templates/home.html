@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            home
+        </title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="{{url_for('static' , filename='home.css')}}">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link href='https://fonts.googleapis.com/css?family=Acme' rel='stylesheet'>
+    </head>
+    <body>
+        <div class="nav">
+        <h1 href="{{url_for('home')}}">Movie Manager</h1>
+
+        <form acton="" method="post" name="myform" id="myform">
+            <input type="text" placeholder="Search with name / id" name="search" oninput="update_search(this)" style="width: 250px">
+            <button type="submit" form="myform"><i class="material-icons">search</i></button>
+        </form>
+        <a class="active" href="{{url_for('home')}}">Home</a>
+        <a href="{{url_for('profile')}}">Profile</a>
+         <a href="{{url_for('login')}}">Log Out</a>
+        </div>
+        <div id="livesearch"><ul></ul></div>
+        <h3>Trending Movies for this week</h3>
+        <div class="trending"></div>
+    </body>
+    <script>
+
+    var trend_movies;
+    var details_onhover;
+
+    function makereq(url){
+    var request=new XMLHttpRequest();
+    request.onreadystatechange=handleres;
+    request.open('GET',url,true);
+    request.send();
+    }
+
+    function handleres(){
+        if(this.readyState==4 && this.status==200){
+         var answer=JSON.parse(this.responseText);
+         console.log(answer);
+         display(answer);
+        }
+         //console.log(movies.items[0].id.videoId);
+    }
+
+    var u="https://api.themoviedb.org/3/trending/movie/week?api_key=3dd2c3ec7073af483204e8d200a1b923";
+
+    makereq(u);
+    function display(tm){
+        for(var i=0;i<10;i++){
+            var cont=document.createElement("DIV");
+            cont.setAttribute("class","container");
+            var img=document.createElement("IMG");
+            var div=document.createElement("DIV");
+            var a=document.createElement("A");
+            var link="/view/"+tm.results[i].title;
+            a.setAttribute("href",link)
+            var button=document.createElement("BUTTON");
+            a.appendChild(button);
+            button.setAttribute("type","button");
+            a.setAttribute("class","more")
+            button.innerHTML="More Details";
+            button.style.fontSize = "10px";
+            button.style.backgroundColor = "Transparent";
+            button.style.outline = "None";
+            button.style.color="white";
+            div.setAttribute("class","des");
+            img.src="http://image.tmdb.org/t/p/w185/"+tm.results[i].poster_path;
+            img.class=tm.results[i].title;
+            img.addEventListener('mouseover',function(){
+                myfunc(this);
+            });
+            a.addEventListener('mouseover',function(){
+                myfunc1(this.previousSibling);
+            })
+            a.addEventListener('mouseout',function(){
+                var d=this.previousSibling;
+                d.innerHTML="";
+                d.style.backgroundColor="";
+                d.nextSibling.style.visibility="hidden";
+            })
+            div.addEventListener('mouseover',function(){
+                myfunc1(this);
+            });
+            img.addEventListener('mouseout',function(){
+                d=this.nextSibling
+                d.innerHTML="";
+                d.style.backgroundColor="";
+                d.nextSibling.style.visibility="hidden";
+
+            });
+            
+            div.addEventListener('mouseout',function(){
+                this.innerHTML="";
+                this.style.backgroundColor="";
+                this.nextSibling.style.visibility="hidden";
+            });
+            img.style.border = "2px solid black";
+            cont.appendChild(img);
+            cont.appendChild(div);
+            cont.appendChild(a);
+            document.getElementsByClassName('trending')[0].appendChild(cont);
+         }
+        }
+
+    function myfunc(im){
+        var d=im.nextSibling;
+        d.nextSibling.style.visibility="visible";
+        var temp_url="https://api.themoviedb.org/3/search/movie?api_key=3dd2c3ec7073af483204e8d200a1b923&query="+im.class;
+        //makereq(temp_url);
+        var request=new XMLHttpRequest();
+        request.onreadystatechange=function(){
+            if(this.readyState==4 && this.status==200){
+                var det=JSON.parse(this.responseText);
+                d.style.backgroundColor="rgba(0,0,0,0.7)";
+                d.innerHTML=det.results[0].overview;
+            }
+        };
+        request.open('GET',temp_url,true);
+        request.send();
+    }
+
+    function myfunc1(d){
+        var ima=d.previousSibling;
+        d.nextSibling.style.visibility="visible";
+        var temp_url="https://api.themoviedb.org/3/search/movie?api_key=3dd2c3ec7073af483204e8d200a1b923&query="+ima.class;
+        //makereq(temp_url);
+        var request=new XMLHttpRequest();
+        request.onreadystatechange=function(){
+            if(this.readyState==4 && this.status==200){
+                var det=JSON.parse(this.responseText);
+                d.style.backgroundColor="rgba(0,0,0,0.5)";
+                d.innerHTML=det.results[0].overview;
+                d.style.fontSize="12px";
+                console.log(d.innerHTML);
+            }
+        };
+        request.open('GET',temp_url,true);
+        request.send();
+    }
+
+    function update_search(inp){
+        console.log("in"+inp.value);
+        var tmp=inp.value;
+        var ul=document.getElementsByTagName("ul")[0];
+        ul.innerHTML="";
+        document.getElementById("livesearch").style.backgroundColor="rgba(0,0,0,0)";
+        console.log(tmp);
+        var temp_url="https://api.themoviedb.org/3/search/multi?api_key=3dd2c3ec7073af483204e8d200a1b923&query="+tmp;
+        var request=new XMLHttpRequest();
+        request.onreadystatechange=function(){
+            console.log("y");
+            if(this.readyState==4 && this.status==200){
+                console.log(JSON.parse(this.responseText));
+                var answer=JSON.parse(this.responseText);
+                document.getElementById("livesearch").style.backgroundColor="rgba(0,0,0,0.5)";
+                ul.innerHTML="";
+                var j=5;
+                for(var i=0 ; i<j; i++){
+                    var li=document.createElement("LI");
+                    var a=document.createElement("A");
+                    li.addEventListener('click',function(){
+                        view_detail(this);
+                    });
+                    if(answer.results[i].media_type=="tv" && answer.results[i].name){
+                        a.innerHTML=answer.results[i].name;
+                        tmp="/view/"+answer.results[i].name;
+                        a.setAttribute("href", tmp);
+                        li.appendChild(a);
+                        ul.appendChild(li);}
+                    else if(answer.results[i].media_type=="movie" && answer.results[i].title){
+                        a.innerHTML=answer.results[i].title;
+                        tmp="/view/"+answer.results[i].title;
+                        a.setAttribute("href", tmp);
+                        li.appendChild(a);
+                        ul.appendChild(li);}
+                    else{
+                        i=i+1;
+                        j=j+1;
+                    }
+                    
+                }
+            }
+        };
+        request.open('GET',temp_url,true);
+        request.send();
+        
+    }
+    
+    </script>
+</html>

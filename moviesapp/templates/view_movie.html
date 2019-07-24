@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>view</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="{{url_for('static',filename='view.css')}}">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link href='https://fonts.googleapis.com/css?family=Acme' rel='stylesheet'>
+    </head>
+
+    <body>
+        <div class="nav">
+            <h1>Movie Manager</h1>
+            <a href="{{url_for('home')}}" active>Home</a>
+            <a href="{{url_for('profile')}}">Profile</a>
+             <a href="{{url_for('login')}}">Log Out</a>
+        </div>
+        
+        <div class="first">
+            <div align="center" style="margin-top: 15px">
+            <img class="image" style="border: 1px solid black;">
+        </div>
+            <h3 align="center">TITLE:  {{value}}<h3>
+            <div class="des" align="center" style="text-align: center"></div>
+        </div>
+        <h2>Trailer</h2>
+        <div class="trailer">
+            <iframe class="video w100" width="640" height="360" frameborder="0"></iframe>
+            <div class="options" align="center">
+                    <button id="like" type="button" onclick="like_video()" title="Like" style="left: 100px"><i class="material-icons">thumb_up</i></button>
+                    <button id="fav" type="button" onclick="fav()" title="Davourite" style="left: 200px"><i class="material-icons">favorite</i></button>
+                    <button id="wl" type="button" onclick="watchlater()" title="Watch Later" style="left: 300px"><i class="material-icons">watch_later</i></button>
+                    <button id="wa" type="button" onclick="watched()" title="Watched" style="left: 400px"><i class="material-icons">done</i></button>
+            </div>
+        </div>
+
+        <div class="comments">
+            <h4>VIDEO COMMENTS:</h4>
+        <form name="form_com" id="form_com">
+         <div>
+            <input type="text" placeholder="Write your comments here.." name="com" >
+            <button type="button" onclick="addcomment()">Comment Here</button>
+         </div>
+        </form>
+        <div class="comm2">
+        </div>
+        <div class="comm1">
+            {% for c in comments %}
+            <p><b>{{c[0]}}</b> : {{c[1]}}</p>
+            {% endfor %}
+        </div>
+        </div>
+
+    </body>
+
+    <script>
+        var val="{{value}}";
+        var cur_path;
+        var cur_title=val;
+        var user = "{{session['user']}}";
+
+        function addcomment(){
+            var form =document.forms.form_com;
+            var c=document.getElementsByClassName("comm2")[0];
+            if(form.com.value) {
+            var data="comment="+encodeURIComponent(form.com.value)+"&title="+encodeURIComponent(cur_title);
+            var request=new XMLHttpRequest();
+            request.onreadystatechange=function(){
+                if(this.readyState==4 && this.status==200){ 
+                 console.log("commented");
+                 var comm = "<b>" + String(user) + "</b>" + " : " + form.com.value;
+                 var p=document.createElement("P");
+                 p.innerHTML=comm;
+                 c.appendChild(p);
+             }
+            }
+            request.open('POST',"/addcomment",true);
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            request.send(data);
+            }
+        }
+
+
+        function view_detail(){
+            var request=new XMLHttpRequest();
+            if(val.length==9 && val[0]=="t" && val[1]=="t"){
+                var url="https://api.themoviedb.org/3/find/"+val+"?api_key=3dd2c3ec7073af483204e8d200a1b923&external_source=imdb_id";
+                request.onreadystatechange=function(){
+                    if(this.readyState==4 && this.status==200){
+                        var obj;
+                        answer=JSON.parse(this.responseText);
+                        console.log(answer);
+                        if(answer.movie_results) obj=answer.movie_results[0];
+                        else obj=answer.tv_results[0];
+                        
+                        if(obj.name) cur_title=obj.name;
+                        else cur_title=obj.title;
+                        document.getElementsByTagName("h3")[0].innerHTML=cur_title;
+                        document.getElementsByClassName("image")[0].src="http://image.tmdb.org/t/p/w185/"+obj.poster_path;
+                        var overview="OverView: " + obj.overview + "\n"
+                        document.getElementsByClassName("des")[0].innerHTML=overview;
+
+                    
+                }
+               };
+            }
+            else{
+                var url="https://api.themoviedb.org/3/search/multi?api_key=3dd2c3ec7073af483204e8d200a1b923&query="+val;
+            
+                request.onreadystatechange=function(){
+                    if(this.readyState==4 && this.status==200){
+
+                        answer=JSON.parse(this.responseText);
+                        console.log(answer);
+                        var obj=answer.results[0];
+                        if(obj.name) cur_title=obj.name;
+                        else cur_title=obj.title;
+                        document.getElementsByClassName("image")[0].src="http://image.tmdb.org/t/p/w185/"+obj.poster_path;
+                        var overview="OVERVIEW: " + obj.overview + "<br>" + "RELEASE DATE: " + obj.release_date +   "<br>" + "AVERAGE RATING: " + obj.vote_average + "<br>";                        
+                        console.log(obj.release_date);
+                        document.getElementsByClassName("des")[0].innerHTML=overview;
+       
+                }
+               };
+            }
+        request.open('GET',url,true);
+        request.send()
+        }
+
+
+        function get_trailer(url){
+            var request=new XMLHttpRequest();
+            request.onreadystatechange=function(){
+                if(this.readyState==4 && this.status==200){
+
+                answer=JSON.parse(this.responseText);
+                var v=document.getElementsByTagName("iframe")[0];
+                v.src="http://www.youtube.com/embed/"+answer.items[0].id.videoId;
+                cur_path="http://www.youtube.com/embed/"+answer.items[0].id.videoId;
+                
+            }
+        };
+        request.open('GET',url,true);
+        request.send()
+
+        }
+
+        function like_video(){
+            var request=new XMLHttpRequest();
+            request.onreadystatechange=function(){
+                if(this.readyState==4 && this.status==200){
+                    console.log("liked");
+                }
+            };
+            var data;
+            var b=document.getElementById("like");
+            if(b.style.backgroundColor==""){
+                data='state=liked&path='+encodeURIComponent(cur_path)+'&title='+encodeURIComponent(cur_title);    
+                b.style.backgroundColor="green";
+            }
+            else{
+                data='state=disliked&path='+encodeURIComponent(cur_path)+'&title='+encodeURIComponent(cur_title);
+                b.style.backgroundColor="";
+            }
+            request.open('POST',"{{url_for('like')}}",true);
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            request.send(data);
+
+        }
+
+        function watchlater(){
+            var request=new XMLHttpRequest()
+            var w=document.getElementById("wl");
+            var data;
+            if(w.style.backgroundColor=="blue"){
+                w.style.backgroundColor="";
+                data='state=rwl&path='+encodeURIComponent(cur_path)+'&title='+encodeURIComponent(cur_title); 
+            }
+            else{
+                w.style.backgroundColor="blue";
+                data='state=wl&path='+encodeURIComponent(cur_path)+'&title='+encodeURIComponent(cur_title)
+            }
+            request.onreadystatechange=function(){
+                if(this.readyState==4 && this.status==200)
+                 console.log("done");
+            };
+            request.open('POST',"{{url_for('watchlater')}}",true);
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            request.send(data);
+        }
+
+        function watched(){
+            var request=new XMLHttpRequest()
+            var w=document.getElementById("wa");
+            var data;
+            if(w.style.backgroundColor=="blue"){
+                w.style.backgroundColor="";
+                data='state=nwa&path='+encodeURIComponent(cur_path)+'&title='+encodeURIComponent(cur_title); 
+            }
+            else{
+                w.style.backgroundColor="blue";
+                data='state=wa&path='+encodeURIComponent(cur_path)+'&title='+encodeURIComponent(cur_title);
+            }
+            request.onreadystatechange=function(){
+                if(this.readyState==4 && this.status==200)
+                 console.log("done");
+            };
+            request.open('POST',"{{url_for('watched')}}",true);
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            request.send(data);
+        }
+
+        function fav(){
+            var request=new XMLHttpRequest()
+            var w=document.getElementById("fav");
+            var data;
+            if(w.style.backgroundColor=="red"){
+                w.style.backgroundColor="";
+                data='state=nfa&path='+encodeURIComponent(cur_path)+'&title='+encodeURIComponent(cur_title); 
+            }
+            else{
+                w.style.backgroundColor="red";
+                data='state=fa&path='+encodeURIComponent(cur_path)+'&title='+encodeURIComponent(cur_title);
+            }
+            request.onreadystatechange=function(){
+                if(this.readyState==4 && this.status==200)
+                 console.log("done");
+            };
+            request.open('POST',"{{url_for('favourites')}}",true);
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            request.send(data);
+        }
+        var u="https://www.googleapis.com/youtube/v3/search?part=snippet&q="+val+"%20trailer&videoDuration=short&type=video&key=AIzaSyD03P5ltNPXi_of-9YcLJtihs1-ZPOtZs4";
+        get_trailer(u);
+        view_detail();
+    </script>
+
+
+</html>

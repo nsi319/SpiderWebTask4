@@ -1,0 +1,95 @@
+body{
+    background-image: url("b1.jpg");
+    background-size: cover;
+    font-family: 'Bigshot One';
+}
+
+h1{
+    float: left;
+    font-size: 30px;
+    font-style: bold;
+}
+
+h2{
+    text-align: center;
+    padding: 10px;
+}
+
+.nav{
+    overflow: auto;
+    background-color: lightgrey;
+}
+.nav a{
+    left: 100px;
+    position: relative;
+    top:25px;
+    padding:15px;
+    color: black;
+    font-style: bold;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.active{
+    background-color: darkgrey;
+}
+
+img{
+    text-align: center;
+    padding :10px;
+    align-content: center;
+}
+
+.des{
+    padding:10px;
+    line-height: 50px;
+}
+
+.first{
+    overflow: auto;
+}
+
+.trailer{
+    padding: 10px;
+    text-align: center;
+}
+
+.options{
+    width: 100%;
+    bottom:100px;
+}
+.options li{
+    list-style-type: none;
+    box-sizing: border-box;
+    padding:40px;
+}
+
+i{
+    color: black;
+}
+form div{
+    padding: 5px;
+}
+
+button{
+    border-radius: 8px;
+    bottom: 100px;
+}
+.comments{
+    padding:10px; 
+    text-align: left;
+    margin-left: 50px;
+    width: 95%;
+    border: 1px solid black;
+    background-color: lightgrey;
+    font-size: 20px;  
+}
+
+input{
+    border:none;
+    border-radius: 9px;
+    width: 60%;
+    background-color: white;
+    height: 40px;
+}
+

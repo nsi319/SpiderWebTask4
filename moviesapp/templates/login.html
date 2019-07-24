@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>login user</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="{{url_for('static',filename='login.css')}}">
+        <link href='https://fonts.googleapis.com/css?family=Acme' rel='stylesheet'>
+        <link href='https://fonts.googleapis.com/css?family=Actor' rel='stylesheet'>
+    </head>
+
+    <body>
+      <header>
+        <h1>Movie Manager</h1>
+      </header>
+        <form method="POST" action="" id = "login">
+      <div class= "user_login">
+        <label>Username:</label>
+        <input type="text" name="user" required>
+        <br>
+        <label>Password:</label>
+        <input type="password" name="pass" oninput="myfunc(this)" required>
+    </div>
+    <div class="button">
+        <button type="submit" form = "login" value="Submit">Log in</button>
+    </div>
+    {% if error %}
+     <p><b>{{error}}</b></p>
+     {% endif %}
+    <p>New to Movie Manager?  <a href = "{{ url_for('signup') }}" class="new_user">Sign up</a></p>      
+        {% if msg %}
+        <p style="font-style: bold">{{msg}}</p>
+        {% endif %}
+     </form> 
+    </body>
+    <script>
+        function myfunc(inp){
+            inp.setAttribute("type","password");
+        }
+    </script>
+
+</html>
